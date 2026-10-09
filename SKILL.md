@@ -1,6 +1,6 @@
 ---
 name: codex-claude-collaboration
-description: "Coordinate Codex and Claude Code through a shared user brief, independent idea generation and reviews, separate implementation ownership, shared-file discussion, and usage-aware handoffs. Use when the user requests collaboration between these agents, peer review of research directions or results, or communication through a shared dialogue file."
+description: "Coordinate Codex and Claude Code through a shared user brief, independent idea generation and reviews, separate implementation ownership, shared-file discussion, and usage-limit monitoring with early wrap-up and handoffs. Use when the user requests collaboration between these agents, peer review of research directions or results, or communication through a shared dialogue file."
 ---
 
 # Codex–Claude Collaboration
@@ -25,6 +25,7 @@ The brief records:
 - **Venue and timeline:** the intended venue or audience, and the deadline.
 - **Risk appetite:** whether the user prefers a safe, well-supported result (for example an empirical paper) or a higher-novelty bet that may fail.
 - **Resources:** exact hardware variants, compute, data, staff time, and budget.
+- **Usage limits:** each agent's known usage cap and reset time, if the user knows them, and which agent tends to run out first.
 - **Existing material and constraints:** current ideas, prior handoffs, lab strengths, and anything off-limits.
 
 Ask only for the fields the request, project files, handoff, or an existing brief do not already answer. Collect all missing fields in one consolidated question rather than one at a time. Mode-specific inputs are required: for reviewing ideas, the ideas themselves; for implementation, the accepted direction and ownership. If the user declines to specify a field, record the default you will use and note that the user chose it. Treat unverified hardware or compute details as unverified, never as fact.
@@ -89,6 +90,27 @@ During explicitly requested active discussion, reread at bounded intervals, typi
 ## Work with uneven availability
 
 Use quota/reset information only when supplied by the user or available tools. Do not invent remaining usage or encode today's limits as permanent facts. Reserve overlap for the highest-impact disagreements, experiment review, and result interpretation; preserve enough capacity for a handoff.
+
+### Watch your own usage limit
+
+Either agent may have the shorter cap. Record known limits in the brief: which agent tends to run out first, window length, and current reset time.
+
+Check your usage with `scripts/usage.py` at session start, before starting any large step, and roughly every 20–30 minutes of active work. Run it at checkpoints; it is not a background service.
+
+```sh
+python3 /path/to/skill/scripts/usage.py codex     # Codex: reads rate-limit events from Codex session logs
+python3 /path/to/skill/scripts/usage.py claude    # Claude Code: status line file if configured, else a local cache
+python3 /path/to/skill/scripts/usage.py manual --window-start 2026-01-01T10:00+09:00 --window-hours 5 [--used-percent 60]
+```
+
+For Claude Code, the documented source is the `rate_limits` field that Claude Code passes to a status line command. If the user's status line saves that JSON to a file, pass it with `--claude-status-file`. Otherwise the helper falls back to an undocumented local cache that may be stale or change format. Check `age_minutes` before trusting any reading. If the level is `unknown`, ask the user once for the window start and, if they know it, the percent used, then use `manual`. Never guess.
+
+Act on the reported level. The defaults are `warn` at 75% used or an estimated 45 minutes to the cap, and `wrap` at 90% or 20 minutes. The user may set other thresholds.
+
+- **`warn`:** Finish the current step, but do not start new large work, long searches, or expensive jobs. Append a dialogue record with status `USAGE` giving your percent used, reset time, and what you will finish before stopping. Start drafting the handoff.
+- **`wrap`:** Stop new work and write the handoff now, using the template, while there is still capacity to finish it. Append it with status `HANDOFF`, and state that your monitoring has stopped and when you expect to return.
+
+When the peer posts a `USAGE` warning, settle at once any question that needs the peer's judgment, and stop sending it routine review requests. Plan to continue your own assigned work alone. The agent with more remaining capacity carries continuing work; the agent with less reserves its usage for decisions that need two independent views. A peer that goes silent after a `USAGE` or `HANDOFF` record has not approved anything.
 
 At wrap-up, stop starting new work, preserve completed and in-progress artifacts, and write a compact handoff using the reference template. Record running jobs and their intended disposition; do not terminate unrelated jobs. State whether discussion monitoring has stopped. The available agent can continue its assigned work under existing authorization, but must preserve unresolved peer-review items for the next overlap.
 

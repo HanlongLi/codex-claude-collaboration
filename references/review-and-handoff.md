@@ -12,9 +12,10 @@ Record it in the dialogue with status `BRIEF` before substantive work. Append a 
 - **Risk appetite:** safe and well-supported, a higher-novelty bet, or a stated mix.
 - **Resources:** exact hardware variants, compute, data, staff time, and budget. Mark each item as user-stated or unverified.
 - **Existing material and constraints:** current ideas, prior handoffs, lab strengths, and exclusions.
+- **Usage limits:** each agent's known cap, window, and reset time; which agent tends to run out first; any custom warn/wrap thresholds.
 - **Defaults chosen by the user:** fields the user declined to specify, and the default recorded for each.
 
-Example request to the user, sent as one message: "Before we start, please tell us: (1) whether you want new ideas, a review of existing ideas, or something else; (2) the problem or capability you care about and what success looks like; (3) target venue and deadline; (4) whether you prefer a safe result or a riskier, more novel bet; (5) exact hardware, compute, data, and staff time."
+Example request to the user, sent as one message: "Before we start, please tell us: (1) whether you want new ideas, a review of existing ideas, or something else; (2) the problem or capability you care about and what success looks like; (3) target venue and deadline; (4) whether you prefer a safe result or a riskier, more novel bet; (5) exact hardware, compute, data, and staff time; (6) if you know them, each agent's usage limits and reset times."
 
 ## Independent research review
 
@@ -50,4 +51,4 @@ Use actual agreements. Do not assign the other agent work and report it as accep
 - **Running work:** Host/job identifiers, outputs, current status as last checked, and whether work should continue. No secrets.
 - **Next action:** The smallest concrete step, its owner, and prerequisites.
 - **Unresolved review:** Specific question requiring independent judgment; do not imply consensus.
-- **Availability:** User/tool-reported limits if relevant; whether dialogue monitoring is active or stopped.
+- **Availability:** Latest `scripts/usage.py` reading or user-reported limit (percent used, reset time, source, and age); when you expect to return; whether dialogue monitoring is active or stopped.

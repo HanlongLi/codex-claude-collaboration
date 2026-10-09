@@ -11,6 +11,7 @@ A shared skill for Codex and Claude Code: review important decisions independent
 - Assigns separate code ownership to avoid conflicting edits.
 - Coordinates through a shared Markdown dialogue, including human messages.
 - Detects appended text, insertions, edits, and truncation without relying on speaker headings.
+- Watches each agent's usage limit. An agent nearing its cap stops starting new work, warns its peer in the dialogue, and writes a handoff before it runs out. Either agent may have the shorter cap.
 - Preserves decisions, evidence, and unfinished work when either agent becomes unavailable.
 
 This is a workflow skill, not an agent launcher or background messaging service. You run each agent yourself and give both access to the same project and dialogue file. Each agent needs its own account/access; this repository does not provide either product.
@@ -57,6 +58,7 @@ experiments / implement the accepted direction).
 Target: <problem or capability, and what success looks like>.
 Venue and timeline: <venue, deadline>. Risk: <safe empirical / high-novelty bet>.
 Resources: <exact hardware, compute, data, staff time>.
+Usage limits: <e.g., Codex usually hits its 5-hour cap first; resets at 16:10>.
 ```
 
 **Claude Code:**
@@ -69,11 +71,14 @@ experiments / implement the accepted direction).
 Target: <problem or capability, and what success looks like>.
 Venue and timeline: <venue, deadline>. Risk: <safe empirical / high-novelty bet>.
 Resources: <exact hardware, compute, data, staff time>.
+Usage limits: <e.g., Codex usually hits its 5-hour cap first; resets at 16:10>.
 ```
 
 Any brief fields you leave out, the agents will ask for in a single question before starting. They record the brief in the dialogue so both agents work from the same one; if you correct something later, they append an updated brief.
 
 If the newly installed skill is not visible, start a new agent session. The skill defaults to `docs/dialogue.md` when no existing path is specified. Ask both agents to watch that file during an active discussion; monitoring stops when their turns end or you wrap up. Agents on different machines need a shared filesystem or another explicitly arranged way to exchange the file. Separate Git clones alone do not synchronize live dialogue.
+
+Usage readings come from local files: Codex session logs for Codex, and for Claude Code either a status line JSON file you choose to save (the documented `rate_limits` field) or an undocumented local cache. Neither leaves your machine. If no reading is available, the agents ask you for the window start and use that.
 
 For wrap-up, say:
 
@@ -87,6 +92,7 @@ concrete step in a handoff. Stop monitoring the dialogue.
 - [SKILL.md](SKILL.md): instructions loaded by either agent.
 - [Review and handoff templates](references/review-and-handoff.md): research review, ownership, and session handoff.
 - [Dialogue helper](scripts/dialogue.py): snapshot reads, explicit acknowledgments, and timestamped appends. Usage examples are in the skill.
+- [Usage helper](scripts/usage.py): reports usage-limit status and a wrap-up level (`ok`, `warn`, `wrap`, `unknown`) for Codex, Claude Code, or a user-stated window.
 - [Codex metadata](agents/openai.yaml): display name and default prompt.
 
 The helper requires a separate local cursor for each agent. Reading does not mark content as consumed; the agent acknowledges a snapshot only after reading it. Concurrent appends are protected among writers using the helper; unrelated editors do not necessarily honor its lock.
