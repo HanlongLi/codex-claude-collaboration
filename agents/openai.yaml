@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex–Claude Collaboration"
+  short_description: "Independent reviews, owned coding, clear handoffs"
+  default_prompt: "Use $codex-claude-collaboration to coordinate independent reviews and separate implementation ownership with Claude Code."
