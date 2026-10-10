@@ -16,23 +16,15 @@ The current dialogue helper supports Codex and Claude Code. Broader agent integr
 - Quota monitoring is optional; unknown readings do not block collaboration.
 - Live discussion is available when requested, with a bounded interval and stopping point.
 
-The main skill instructions are 49.2% shorter by word count than the first published version and 59.9% shorter than the subsequent quota-monitoring version. These are reductions in initial instruction size, not measured subscription-usage savings. Detailed references still add context when loaded. To measure actual savings, compare equivalent tasks with the same agent/model setup and record total usage, dialogue checks, review rounds, completion quality, and elapsed time. Shared-file edits still require a full rescan so human messages are not missed.
+## Latest update · October 10, 2026
 
-## Changes since the first release
+- **New name:** Collagent, with `$collagent` and `/collagent` commands.
+- **Less coordination:** milestone check-ins, shorter messages, and focused reviews.
+- **Simpler setup:** reuse current briefs and load detailed guidance only when needed.
+- **Lighter instructions:** 49% fewer words than the first release; actual quota savings have not been measured.
+- **Optional usage monitoring:** keep working when usage readings are unavailable.
 
-| Area | First release | Current behavior |
-|---|---|---|
-| Name and invocation | `codex-claude-collaboration` | `collagent`; Codex uses `$collagent`, Claude uses `/collagent` |
-| Main instructions | 1,496 words in `SKILL.md` | 760 words; 49.2% smaller |
-| Detailed guidance | Research and dialogue procedures in the main instructions | Separate references loaded for the relevant task |
-| Briefs | Reconfirm existing briefs; detailed research fields | Reuse current briefs; small tasks need only relevant details |
-| Coordination | Separate ownership and consequential reviews; frequent checks during requested live discussion | Explicit milestone-based default, focused review exchanges, and no idle polling |
-| Live discussion | Suggested checks every 15–45 seconds | Typically every 2–5 minutes when requested; faster exchange remains available when needed and requested |
-| Quota monitoring | Usage-aware handoffs without a telemetry helper | Optional Codex/Claude readings or manual values, warning thresholds, and early handoffs; unknown usage does not block work |
-
-Independent judgment, one writer per code area, explicit evidence status, reliable dialogue acknowledgments, and preservation of human edits remain part of the workflow. Other-agent integrations are planned; the current helper still supports Codex and Claude Code.
-
-See the [changelog](CHANGELOG.md) for dated milestones, commit links, and the instruction-size measurement.
+[Read the full update log →](CHANGELOG.md)
 
 ## Install
 

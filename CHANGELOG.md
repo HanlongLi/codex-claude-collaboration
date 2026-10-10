@@ -1,48 +1,46 @@
-# Changelog
+# Update log
 
-Changes are grouped by publication milestone, using the repository's commit history. No numbered releases have been assigned.
+What's new and improved in Collagent, newest first.
 
-## 2026-10-10 — Collagent and reduced coordination overhead
+## October 10, 2026 — Less overhead, smoother teamwork
 
-[Implementation commit](https://github.com/HanlongLi/collagent/commit/333a56aa495e4be6b8c6155a4b316ccd45c8923d)
+**New**
 
-- Renamed the project, skill, UI metadata, and invocation to Collagent. Updated installation and migration instructions.
-- Made milestone-based collaboration the explicit default. Agents work within assigned ownership, exchange focused reviews, and avoid idle polling or duplicate implementation, searches, and tests by default.
-- Reuse current briefs without reconfirming unchanged facts. Small coding tasks no longer need irrelevant research fields.
-- Moved research guidance, dialogue mechanics, and quota-monitoring details into references loaded only when needed.
-- Keep routine messages short, batch questions, and link artifacts instead of repeating logs or plans. A focused review usually needs one request and one response; new evidence and unresolved disagreements can justify more.
-- For requested live discussion, changed the typical check interval from 15–45 seconds to 2–5 minutes. Faster exchange remains available when needed and requested.
-- Made quota monitoring optional and tied checks to useful checkpoints. Unknown readings do not block collaboration or cause repeated requests for usage values.
+- Meet **Collagent**: the new name for Codex–Claude Collaboration. Use `$collagent` in Codex or `/collagent` in Claude Code.
 
-The dialogue and usage helper implementations were not changed in this milestone. Speaker labels still support Codex and Claude; other-agent integrations remain planned. Append locking, explicit snapshot acknowledgment, full rescans after older-text edits, independent review, and ownership safeguards are preserved.
+**Improved**
 
-## 2026-10-09 — Quota monitoring and early handoffs
+- Agents check in when work is ready for review, keeping routine coordination quieter.
+- Shorter messages and focused reviews help avoid repeated discussions and duplicate work.
+- Existing task briefs carry forward, so you spend less time reconfirming the same details.
+- Small coding tasks use a simpler brief; detailed research guidance loads when needed.
+- Main instructions are 49% shorter than the first release, reducing initial instruction context. Actual quota savings have not been measured.
+- Live discussions usually check for replies every 2–5 minutes; faster exchange is available when requested.
 
-[Implementation commit](https://github.com/HanlongLi/collagent/commit/267c76b21820e75c24ed7fb746b030f118fc4dab)
+**Changed**
 
-- Added `scripts/usage.py` with Codex local session readings, Claude status-line/cache readings, and a manual fallback.
-- Added configurable warning and wrap-up thresholds, known reset times, and estimated time to cap.
-- Added early warning and handoff instructions so a constrained agent can preserve work before becoming unavailable.
-- Expanded the brief and handoff templates to record known limits, their source, and availability.
+- Usage monitoring is optional. Missing usage information no longer holds up collaboration.
+- Existing installations need the new `collagent` folder name and an updated Claude symlink. Restart agent sessions after updating.
 
-## 2026-10-09 — First published version
+## October 9, 2026 — Earlier warnings, better handoffs
 
-[Initial commit](https://github.com/HanlongLi/collagent/commit/6e3026867c84ce722c9a8ac92cadd0bd2758f2e6)
+**New**
 
-- Published the shared Codex–Claude workflow: shared briefs, independent idea generation and reviews, separate implementation ownership, evidence tracking, and handoffs.
-- Included `scripts/dialogue.py` for timestamped appends, locked writes, complete snapshot reads, separate participant cursors, and explicit acknowledgment.
-- Included research review and handoff templates, shared installation instructions, and Codex UI metadata.
+- Optional usage readings for Codex and Claude Code, with manual values available when needed.
+- Configurable warnings as an agent approaches its usage limit.
+- Early wrap-up guidance helps save decisions and unfinished work before capacity runs out.
 
-## Instruction-size comparison
+**Improved**
 
-Counts include the complete `SKILL.md` file, including frontmatter, using Python's whitespace-based `len(text.split())` count.
+- Handoffs can include known reset times and availability, helping the other agent continue its assigned work.
 
-| Published milestone | Commit | Words | Change from first release |
-|---|---|---:|---:|
-| First release | `6e30268` | 1,496 | Baseline |
-| Quota monitoring | `267c76b` | 1,893 | +26.5% |
-| Collagent optimization | `333a56a` | 760 | −49.2% |
+## October 9, 2026 — First release
 
-The optimized entrypoint is also 59.9% smaller than the quota-monitoring version. This measures initial instruction size, not token counts, total package size, task quality, or subscription-quota savings. Loading references adds context when their guidance is needed. Actual usage savings have not been benchmarked.
+**New**
 
-[Compare first release with the optimization](https://github.com/HanlongLi/collagent/compare/6e3026867c84ce722c9a8ac92cadd0bd2758f2e6...333a56aa495e4be6b8c6155a4b316ccd45c8923d).
+- Collaboration between Codex and Claude Code through a shared dialogue file.
+- A shared task brief, independent reviews, and clear ownership of code changes.
+- Research idea generation and review templates.
+- Reliable dialogue updates and handoffs that preserve decisions and unfinished work.
+
+[View the project history](https://github.com/HanlongLi/collagent/commits/main/).
