@@ -1,4 +1,4 @@
 interface:
-  display_name: "Codex–Claude Collaboration"
-  short_description: "Independent reviews, owned coding, clear handoffs"
-  default_prompt: "Use $codex-claude-collaboration to coordinate independent reviews and separate implementation ownership with Claude Code."
+  display_name: "Collagent"
+  short_description: "Focused agent reviews with less coordination overhead"
+  default_prompt: "Use $collagent to coordinate focused peer reviews, separate implementation ownership, and concise handoffs between AI coding agents."

@@ -1,111 +1,81 @@
-# Codex–Claude Collaboration
+# Collagent
 
-A shared skill for Codex and Claude Code: review important decisions independently, compare evidence, then implement with clear ownership.
+AI agents working together, with less overhead.
 
-## What it does
+Collagent is a workflow skill for shared briefs, independent reviews, separate code ownership, and reliable file-based handoffs. Its default is milestone-based collaboration: agents work independently and exchange focused reviews when there is something worth reviewing.
 
-- Starts from a shared brief: the user's purpose (new ideas, review, experiments, implementation, or other), target problem, venue, risk appetite, and resources. Agents ask for missing fields in one question and do not start work until the brief is complete.
-- Separates idea generation from filtering, so candidates are not just the residue that survives prior-art review.
-- Reviews research novelty, generality, value, and contribution separately.
-- Encourages independent judgments and explicit disagreements before consensus.
-- Assigns separate code ownership to avoid conflicting edits.
-- Coordinates through a shared Markdown dialogue, including human messages.
-- Detects appended text, insertions, edits, and truncation without relying on speaker headings.
-- Watches each agent's usage limit. An agent nearing its cap stops starting new work, warns its peer in the dialogue, and writes a handoff before it runs out. Either agent may have the shorter cap.
-- Preserves decisions, evidence, and unfinished work when either agent becomes unavailable.
+The current dialogue helper supports Codex and Claude Code. Broader agent integrations are planned; a shared `SKILL.md` alone does not establish tested support. This skill does not launch agents or run a background messaging service. Run each agent yourself with access to the same project and dialogue file.
 
-This is a workflow skill, not an agent launcher or background messaging service. You run each agent yourself and give both access to the same project and dialogue file. Each agent needs its own account/access; this repository does not provide either product.
+## Use less coordination
+
+- One owner implements each area; a peer reviews the relevant diff at a milestone.
+- No routine idle polling, acknowledgment loops, or duplicate implementation/search/test work.
+- Reuse the current brief; ask only for missing details that affect the task.
+- Load research, dialogue mechanics, and quota-monitoring instructions only when needed.
+- Keep messages short and link artifacts instead of repeating logs or plans.
+- Quota monitoring is optional; unknown readings do not block collaboration.
+- Live discussion is available when requested, with a bounded interval and stopping point.
+
+The main skill instructions are approximately 60% shorter by word count than the previous version. This is a reduction in initial instruction size, not a measured subscription-usage saving. To measure actual savings, compare equivalent tasks with the same agent/model setup and record total usage, dialogue checks, review rounds, completion quality, and elapsed time. Shared-file edits still require a full rescan so human messages are not missed.
 
 ## Install
 
-The commands below target macOS or Linux. You need Git and Python 3. The dialogue helper uses only Python's standard library; its append locking uses Unix `fcntl`.
-
-### Both Codex and Claude Code
+Requires Git and Python 3 on macOS/Linux; the dialogue helper uses standard-library code and Unix `fcntl` locking. Each agent needs its own account/access.
 
 Keep one checkout and link it into Claude's skills directory:
 
 ```sh
 mkdir -p ~/.codex/skills ~/.claude/skills
-git clone https://github.com/HanlongLi/codex-claude-collaboration.git \
-  ~/.codex/skills/codex-claude-collaboration
-ln -s ~/.codex/skills/codex-claude-collaboration \
-  ~/.claude/skills/codex-claude-collaboration
+git clone https://github.com/HanlongLi/collagent.git \
+  ~/.codex/skills/collagent
+ln -s ~/.codex/skills/collagent ~/.claude/skills/collagent
 ```
 
-These commands assume the destination skill directories do not already exist. If you already installed the skill, update the existing checkout instead. If your Codex installation uses a custom skills location, substitute that location and point the symlink to it.
+These commands assume the destinations do not exist. If already installed, preserve local modifications and rename/update the existing checkout, then repoint the Claude symlink. Restart agent sessions after changing the installed skill name. The new invocation is `$collagent` in Codex and `/collagent` in Claude Code; existing prompts using the old name need updating. Updating the repository does not automatically rename installed skill directories or repoint existing symlinks.
 
-### One agent only
+For Codex alone, omit the symlink. For Claude alone, clone directly into `~/.claude/skills/collagent`. Substitute a custom Codex skills location if needed.
 
-For Codex alone, run the `mkdir` and `git clone` commands above and omit the symlink. For Claude Code alone:
+## Start a task
 
-```sh
-mkdir -p ~/.claude/skills
-git clone https://github.com/HanlongLi/codex-claude-collaboration.git \
-  ~/.claude/skills/codex-claude-collaboration
-```
-
-## Use
-
-Open the same project in both agents. Invoke the skill in each agent with the same dialogue path and objective.
-
-**Codex:**
+Open the same project in both agents and give them the same dialogue path and objective:
 
 ```text
-$codex-claude-collaboration
-Collaborate with Claude Code on this project using docs/dialogue.md.
-Purpose: generate new research directions (or: review these ideas / design
-experiments / implement the accepted direction).
-Target: <problem or capability, and what success looks like>.
-Venue and timeline: <venue, deadline>. Risk: <safe empirical / high-novelty bet>.
-Resources: <exact hardware, compute, data, staff time>.
-Usage limits: <e.g., Codex usually hits its 5-hour cap first; resets at 16:10>.
+Use collagent to collaborate through docs/dialogue.md.
+Goal: <task and deliverable>.
+Constraints: <relevant limits>.
+Ownership: <who implements which area; peer assignment requires agreement>.
+Next review: <diff, decision, or result worth reviewing>.
 ```
 
-**Claude Code:**
+For research, also supply the intended venue/deadline, risk appetite, and relevant resources. Agents ask only for missing details that materially affect the work. They reuse a current brief and append changes when the task changes.
+
+Default communication occurs at milestones. Ask explicitly for live discussion if needed. Monitoring stops when the agent turn ends or you wrap up. Agents on different machines need a shared filesystem or another arranged way to exchange the dialogue; separate Git clones do not synchronize live dialogue.
+
+To stop:
 
 ```text
-/codex-claude-collaboration
-Collaborate with Codex on this project using docs/dialogue.md.
-Purpose: generate new research directions (or: review these ideas / design
-experiments / implement the accepted direction).
-Target: <problem or capability, and what success looks like>.
-Venue and timeline: <venue, deadline>. Risk: <safe empirical / high-novelty bet>.
-Resources: <exact hardware, compute, data, staff time>.
-Usage limits: <e.g., Codex usually hits its 5-hour cap first; resets at 16:10>.
-```
-
-Any brief fields you leave out, the agents will ask for in a single question before starting. They record the brief in the dialogue so both agents work from the same one; if you correct something later, they append an updated brief.
-
-If the newly installed skill is not visible, start a new agent session. The skill defaults to `docs/dialogue.md` when no existing path is specified. Ask both agents to watch that file during an active discussion; monitoring stops when their turns end or you wrap up. Agents on different machines need a shared filesystem or another explicitly arranged way to exchange the file. Separate Git clones alone do not synchronize live dialogue.
-
-Usage readings come from local files: Codex session logs for Codex, and for Claude Code either a status line JSON file you choose to save (the documented `rate_limits` field) or an undocumented local cache. Neither leaves your machine. If no reading is available, the agents ask you for the window start and use that.
-
-For wrap-up, say:
-
-```text
-Wrap up now. Record decisions, evidence, ownership, running jobs, and the next
-concrete step in a handoff. Stop monitoring the dialogue.
+Wrap up now. Record decisions, evidence, ownership, running work,
+unresolved reviews, and the next concrete action. Stop dialogue monitoring.
 ```
 
 ## Included files
 
-- [SKILL.md](SKILL.md): instructions loaded by either agent.
-- [Review and handoff templates](references/review-and-handoff.md): research review, ownership, and session handoff.
-- [Dialogue helper](scripts/dialogue.py): snapshot reads, explicit acknowledgments, and timestamped appends. Usage examples are in the skill.
-- [Usage helper](scripts/usage.py): reports usage-limit status and a wrap-up level (`ok`, `warn`, `wrap`, `unknown`) for Codex, Claude Code, or a user-stated window.
-- [Codex metadata](agents/openai.yaml): display name and default prompt.
+- [SKILL.md](SKILL.md): concise shared workflow.
+- [Research guidance](references/research.md): idea generation and scientific review, loaded for research tasks.
+- [Ownership and handoff templates](references/review-and-handoff.md).
+- [Dialogue instructions](references/dialogue.md) and [helper](scripts/dialogue.py): snapshot reads, explicit acknowledgments, timestamped appends.
+- [Optional usage monitoring](references/usage.md) and [helper](scripts/usage.py): Codex/Claude local readings or manual values; no automatic telemetry for other agents yet.
+- [Codex UI metadata](agents/openai.yaml).
 
-The helper requires a separate local cursor for each agent. Reading does not mark content as consumed; the agent acknowledges a snapshot only after reading it. Concurrent appends are protected among writers using the helper; unrelated editors do not necessarily honor its lock.
+Each agent uses a separate local dialogue cursor. Reading does not mark content consumed; acknowledge only after reading the entire snapshot. Concurrent appends lock cooperating helper writers; other editors may not honor that lock. Dialogue remains append-only for agent messages and preserves human edits.
 
 ## Update
 
-For the shared installation:
-
 ```sh
-git -C ~/.codex/skills/codex-claude-collaboration pull --ff-only
+git -C ~/.codex/skills/collagent pull --ff-only
 ```
 
-The Claude symlink sees the same updated files. Preserve any local modifications before updating. For a Claude-only installation, substitute its directory.
+Preserve local changes first. The Claude symlink sees updates from the shared checkout.
 
 ## License
 
