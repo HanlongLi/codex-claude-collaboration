@@ -10,6 +10,7 @@ Spend overlap on decisions that benefit from independent judgment. Default to mi
 ## Establish the task
 
 - Identify your actual agent identity. Never speak as a peer or manufacture its agreement. Reuse the dialogue path, otherwise use `docs/dialogue.md`.
+- Use a distinct identity and cursor for each participant, including multiple sessions of the same agent. For Gemini CLI or DeepSeek through OpenCode setup, read [agents.md](references/agents.md). A model needs an agent application with file and shell tools to participate.
 - Read latest user instructions, brief, handoff, ownership, and unread dialogue, including human text outside headings. Reuse a current brief without asking the user to reconfirm unchanged facts.
 - Record a new task's objective, deliverable, constraints, and next review point in a short `BRIEF`. Infer these from the request and project. Ask one consolidated question only for missing information that materially changes the work. Research may also need venue, timeline, risk appetite, and exact resources. Mark unverified facts; do not block small coding tasks on irrelevant research fields.
 - Append a superseding brief when the user changes direction, and re-scope affected work. Latest user instructions take precedence over old plans.

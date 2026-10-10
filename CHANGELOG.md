@@ -2,6 +2,21 @@
 
 What's new and improved in Collagent, newest first.
 
+## October 10, 2026 — Gemini and DeepSeek setup
+
+**New**
+
+- Setup instructions for Gemini CLI to join a shared project and dialogue.
+- Setup instructions for DeepSeek models through OpenCode.
+- Distinct dialogue identities for each participant, including multiple sessions of the same agent. Existing Codex and Claude identities continue to work.
+
+**Improved**
+
+- Local tests cover separate cursors, concurrent replies, human edits, and invalid identity rejection.
+- Gemini and DeepSeek/OpenCode can use manual usage values or continue with usage marked unknown.
+
+Gemini CLI and OpenCode live-session verification is pending. This update prepares their shared-file workflow; it does not add automatic quota readers or install the agent applications.
+
 ## October 10, 2026 — Less overhead, smoother teamwork
 
 **New**

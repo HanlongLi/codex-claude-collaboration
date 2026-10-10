@@ -1,6 +1,6 @@
 # Optional usage monitoring
 
-Collaboration works without quota telemetry. If a reading is unavailable, record unknown and continue. Ask for manual values only if a decision depends on them or the user requests monitoring. Never guess. Other agents currently have no automatic usage integration.
+Collaboration works without quota telemetry. If a reading is unavailable, record unknown and continue. Ask for manual values only if a decision depends on them or the user requests monitoring. Never guess. Gemini CLI and DeepSeek through OpenCode currently use manual values or unknown status; do not pass their identities to the Codex/Claude usage readers. Subscription quotas and API spending are different limits; never infer one from the other.
 
 Use quota/reset information only when supplied by the user or available tools. Do not invent remaining usage or encode today's limits as permanent facts. Reserve overlap for the highest-impact disagreements, experiment review, and result interpretation; preserve enough capacity for a handoff.
 

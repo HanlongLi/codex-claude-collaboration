@@ -4,7 +4,7 @@ AI agents working together, with less overhead.
 
 Collagent is a workflow skill for shared briefs, independent reviews, separate code ownership, and reliable file-based handoffs. Its default is milestone-based collaboration: agents work independently and exchange focused reviews when there is something worth reviewing.
 
-The current dialogue helper supports Codex and Claude Code. Broader agent integrations are planned; a shared `SKILL.md` alone does not establish tested support. This skill does not launch agents or run a background messaging service. Run each agent yourself with access to the same project and dialogue file.
+The dialogue helper accepts distinct participant identities for Codex, Claude Code, Gemini CLI, and DeepSeek through OpenCode. Gemini/OpenCode setup is documented and the shared-file protocol is tested locally; live sessions with those applications have not yet been verified. Run each agent yourself with access to the same project and dialogue file. Collagent does not launch or authenticate agents.
 
 ## Use less coordination
 
@@ -18,11 +18,10 @@ The current dialogue helper supports Codex and Claude Code. Broader agent integr
 
 ## Latest update · October 10, 2026
 
-- **New name:** Collagent, with `$collagent` and `/collagent` commands.
-- **Less coordination:** milestone check-ins, shorter messages, and focused reviews.
-- **Simpler setup:** reuse current briefs and load detailed guidance only when needed.
-- **Lighter instructions:** 49% fewer words than the first release; actual quota savings have not been measured.
-- **Optional usage monitoring:** keep working when usage readings are unavailable.
+- **Gemini CLI setup:** share the same skill and dialogue with a distinct Gemini identity.
+- **DeepSeek through OpenCode:** use DeepSeek models in an agent application that loads skills and runs file tools.
+- **Flexible identities:** separate participants and cursors, including multiple sessions of the same agent.
+- **Verification:** shared-file tests passed; Gemini/OpenCode live-session checks are still pending.
 
 [Read the full update log →](CHANGELOG.md)
 
@@ -42,6 +41,12 @@ ln -s ~/.codex/skills/collagent ~/.claude/skills/collagent
 These commands assume the destinations do not exist. If already installed, preserve local modifications and rename/update the existing checkout, then repoint the Claude symlink. Restart agent sessions after changing the installed skill name. The new invocation is `$collagent` in Codex and `/collagent` in Claude Code; existing prompts using the old name need updating. Updating the repository does not automatically rename installed skill directories or repoint existing symlinks.
 
 For Codex alone, omit the symlink. For Claude alone, clone directly into `~/.claude/skills/collagent`. Substitute a custom Codex skills location if needed.
+
+## Gemini CLI and DeepSeek
+
+See the [agent setup guide](references/agents.md) for Gemini CLI installation, DeepSeek provider setup in OpenCode, participant identities, and a short live check. Gemini and DeepSeek/OpenCode use manual usage values or unknown status; automatic quota monitoring remains limited to Codex/Claude.
+
+DeepSeek is the model provider; OpenCode supplies the agent tools needed for this workflow. [OpenCode supports DeepSeek](https://opencode.ai/docs/providers/#deepseek) and [skill loading](https://opencode.ai/docs/skills/). [Gemini CLI supports skills](https://geminicli.com/docs/cli/using-agent-skills/).
 
 ## Start a task
 
@@ -69,6 +74,7 @@ unresolved reviews, and the next concrete action. Stop dialogue monitoring.
 ## Included files
 
 - [SKILL.md](SKILL.md): concise shared workflow.
+- [Agent setup](references/agents.md): Gemini CLI and DeepSeek through OpenCode.
 - [Research guidance](references/research.md): idea generation and scientific review, loaded for research tasks.
 - [Ownership and handoff templates](references/review-and-handoff.md).
 - [Dialogue instructions](references/dialogue.md) and [helper](scripts/dialogue.py): snapshot reads, explicit acknowledgments, timestamped appends.

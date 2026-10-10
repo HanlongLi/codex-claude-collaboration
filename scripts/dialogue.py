@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import tempfile
 
 
@@ -20,6 +21,12 @@ def digest(data):
 
 def emit(value):
     print(json.dumps(value, ensure_ascii=False, indent=2), flush=True)
+
+
+def speaker_identity(value):
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", value):
+        raise ValueError("Speaker must be 1–64 letters, digits, dots, underscores, or hyphens, starting with a letter or digit")
+    return value
 
 
 def read_snapshot(path, cursor):
@@ -67,6 +74,7 @@ def acknowledge(path, cursor, size, expected_digest):
 def append_record(path, speaker, topic, status, body_file):
     import fcntl
 
+    speaker_identity(speaker)
     if any("\n" in field or "\r" in field for field in (topic, status)):
         raise ValueError("Topic and status must be single-line values")
     body = body_file.read_text(encoding="utf-8")
@@ -93,7 +101,8 @@ def main():
             command.add_argument("--bytes", type=int, required=True)
             command.add_argument("--sha256", required=True)
         if name == "append":
-            command.add_argument("--speaker", choices=("Codex", "Claude"), required=True)
+            command.add_argument("--speaker", type=speaker_identity, required=True,
+                                 help="Actual participant identity, e.g. Codex, Claude, Gemini, OpenCode-DeepSeek")
             command.add_argument("--topic", required=True)
             command.add_argument("--status", default="NO REPLY NEEDED")
             command.add_argument("--body-file", type=Path, required=True)
